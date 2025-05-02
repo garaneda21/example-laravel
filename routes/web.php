@@ -1,46 +1,29 @@
 <?php
 
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
-use App\Models\Job;
 
+Route::view('/', 'home');
+Route::view('/contact', 'contact');
 
-Route::get('/', function () {
-    return view('home', [
-        'greeting' => 'Hello',
-        'name' => 'Jhon Robot',
-    ]);
-});
+Route::resource('jobs', JobController::class);
 
-Route::get('/jobs', function () {
-    $jobs = Job::with('employer')->latest()->paginate(5);
+// Auth
+Route::get('register', [RegisteredUserController::class, 'create']);
+Route::post('register', [RegisteredUserController::class, 'store']);
 
-    return view('jobs.index', [
-        'jobs' => $jobs
-    ]);
-});
+Route::get('login', [SessionController::class, 'create']);
+Route::post('login', [SessionController::class, 'store']);
+Route::post('logout', [SessionController::class, 'destroy']);
 
-Route::get('/jobs/create', function () {
-    return view('jobs.create');
-});
-
-Route::get('/jobs/{id}', function ($id) {
-    $job = Job::find($id);
-
-    return view('job.show', ['job' => $job]);
-});
-
-Route::post('/jobs', function () {
-    // validación
-
-    Job::create([
-        'title' => request('title'),
-        'salary' => request('salary'),
-        'employer_id' => 1,
-    ]);
-
-    return redirect('/jobs');
-});
-
-Route::get('/contact', function () {
-    return view('contact');
-});
+/* Route::controller(JobController::class)->group(function () { */
+/*     Route::get('/jobs', 'index'); */
+/*     Route::get('/jobs/create', 'create'); */
+/*     Route::delete('/jobs/{job}', 'show'); */
+/*     Route::get('/jobs/{job}', 'store'); */
+/*     Route::post('/jobs', 'edit'); */
+/*     Route::get('/jobs/{job}/edit', 'update'); */
+/*     Route::patch('/jobs/{job}', 'destroy'); */
+/* }); */
